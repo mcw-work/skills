@@ -1,0 +1,9 @@
+[project]
+name = "canonical-skills-tools"
+version = "0.1.0"
+description = "Validation and page generation scripts for canonical/skills"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0",
+    "pymarkdownlnt>=0.9",
+]

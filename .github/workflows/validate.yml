@@ -1,0 +1,43 @@
+name: Validate Skills
+
+on:
+  pull_request:
+    paths:
+      - "skills/**"
+      - "scripts/validate_skills.py"
+      - "scripts/generate_skills_page.py"
+      - "pyproject.toml"
+      - ".pymarkdown.json"
+      - "Makefile"
+  workflow_dispatch:
+
+jobs:
+  validate-frontmatter:
+    name: Frontmatter & structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Validate SKILL.md files
+        run: make validate
+
+  validate-markdown:
+    name: Markdown lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Lint SKILL.md files
+        run: make lint
+
+  smoke-test-page-generator:
+    name: Page generator smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Generate skills page
+        run: make pages
+      - name: Verify output exists
+        run: test -f docs/index.html && echo "docs/index.html generated successfully."
+

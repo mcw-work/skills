@@ -1,0 +1,52 @@
+{
+  "mode": {
+    "strict-config": true
+  },
+  "extensions": {
+    "front-matter": {
+      "enabled": true
+    }
+  },
+  "plugins": {
+    "md001": { "enabled": true },
+    "md003": { "enabled": true, "style": "atx" },
+    "md004": { "enabled": true, "style": "dash" },
+    "md005": { "enabled": true },
+    "md007": { "enabled": true, "indent": 2 },
+    "md009": { "enabled": true, "br_spaces": 0 },
+    "md010": { "enabled": true },
+    "md012": { "enabled": true, "maximum": 1 },
+    "md013": { "enabled": false },
+    "md018": { "enabled": true },
+    "md019": { "enabled": true },
+    "md022": { "enabled": true },
+    "md023": { "enabled": true },
+    "md024": { "enabled": false },
+    "md025": { "enabled": true },
+    "md026": { "enabled": true },
+    "md027": { "enabled": true },
+    "md028": { "enabled": true },
+    "md029": { "enabled": true },
+    "md030": { "enabled": true },
+    "md031": { "enabled": true },
+    "md032": { "enabled": true },
+    "md033": { "enabled": false },
+    "md034": { "enabled": true },
+    "md035": { "enabled": true },
+    "md036": { "enabled": true },
+    "md037": { "enabled": true },
+    "md038": { "enabled": true },
+    "md039": { "enabled": true },
+    "md040": { "enabled": true },
+    "md041": { "enabled": false },
+    "md042": { "enabled": true },
+    "md043": { "enabled": false },
+    "md044": { "enabled": false },
+    "md045": { "enabled": true },
+    "md046": { "enabled": true },
+    "md047": { "enabled": true },
+    "md048": { "enabled": true },
+    "md049": { "enabled": true },
+    "md050": { "enabled": true }
+  }
+}

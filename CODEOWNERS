@@ -1,2 +1,10 @@
 # Default owners for the repository (Core team)
-*                                   @canonical/platform-engineering
+*                                       @canonical/platform-engineering
+
+# Meta skills — skill authoring tooling; Platform Engineering owns these
+/skills/meta/                           @canonical/platform-engineering
+
+# Expertise namespaces
+/skills/engineering/                    @canonical/platform-engineering
+/skills/documentation/                  @canonical/platform-engineering
+/skills/practices/                      @canonical/platform-engineering

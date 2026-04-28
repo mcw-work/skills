@@ -4,8 +4,7 @@ on:
   pull_request:
     paths:
       - "skills/**"
-      - "scripts/validate_skills.py"
-      - "scripts/generate_skills_page.py"
+      - "scripts/**"
       - "pyproject.toml"
       - ".pymarkdown.json"
       - "Makefile"
@@ -40,4 +39,3 @@ jobs:
         run: make pages
       - name: Verify output exists
         run: test -f docs/index.html && echo "docs/index.html generated successfully."
-

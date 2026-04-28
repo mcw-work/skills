@@ -1,0 +1,53 @@
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    paths:
+      - "skills/**"
+      - "scripts/**"
+      - "pyproject.toml"
+      - "Makefile"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: pr-preview-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    name: Build and deploy PR preview
+    runs-on: ubuntu-latest
+    if: github.event.action != 'closed'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Generate skills page
+        run: make pages
+
+      - name: Deploy PR preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./docs
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: deploy
+
+  cleanup-preview:
+    name: Clean up PR preview
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed'
+    steps:
+      - uses: actions/checkout@v4
+
+      # Deletes gh-pages/pr-preview/pr-{N}/ and posts a cleanup comment on the PR
+      - name: Remove PR preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove

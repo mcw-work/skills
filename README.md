@@ -13,8 +13,6 @@ Agent Skills for Canonical products and technologies — works with any
 [skills-compatible agent](https://agentskills.io/clients) (GitHub Copilot CLI,
 Claude Code, Cursor, Codex, Gemini CLI, Windsurf, and more).
 
-> **Note:** This repository is under active development.
-
 ## Installation
 
 Install all skills from this repository:
@@ -30,8 +28,6 @@ npx skills add canonical/skills --skill <skill-name>
 ```
 
 ## Available Skills
-
-*Skills will be listed here as they are added to the repository.*
 
 Full listing with search and filtering: [canonical.github.io/skills](https://canonical.github.io/skills)
 

@@ -35,9 +35,14 @@ Full listing with search and filtering: [canonical.github.io/skills](https://can
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for a step-by-step guide. Key points:
 
-- **Use a skill authoring tool first** — ask your agent to help you author the
-  skill before writing manually; it will guide you through trigger phrases,
-  frontmatter, and content structure.
+- **Install the `generate-agent-skills` skill first** — it guides your agent
+  through purpose scoping, frontmatter authoring, trigger phrases, and the
+  pre-submission checklist, producing higher-quality, consistent skills:
+
+  ```bash
+  npx skills add canonical/skills --skill generate-agent-skills
+  ```
+
 - Validate locally with `make check` before pushing.
 - Each skill lives in its own folder under `skills/<category>/<skill-name>/`
   and contains exactly one `SKILL.md`.

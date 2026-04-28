@@ -134,12 +134,31 @@ but do not block CI.
 
 ## 6. Adding or Modifying a Skill
 
-1. **Draft** — use a skill authoring tool if available (see CONTRIBUTING.md
-   Step 1) for consistent structure and trigger phrases.
+### Before you start — install `generate-agent-skills`
+
+The `generate-agent-skills` skill from this repository is the recommended
+authoring tool for any new or updated skill. Install it once and your agent
+will guide you through every step below automatically:
+
+```bash
+# local (scoped to current project)
+npx skills add canonical/skills --skill generate-agent-skills
+
+# global (available everywhere)
+npx skills add canonical/skills --skill generate-agent-skills --global
+```
+
+Skipping this step frequently leads to frontmatter and description quality
+issues that block PR review. Use it before writing a single line of `SKILL.md`.
+
+### Authoring steps
+
+1. **Draft** — invoke `generate-agent-skills` with your agent, or follow
+   CONTRIBUTING.md Step 1 for the full prompt.
 2. **Create folder** — `skills/<category>/<skill-name>/SKILL.md`
    (or `skills/products/<product>/<skill-name>/SKILL.md`).
 3. **Write frontmatter** — all six required fields; description ≥ 20 words
-   - `WHEN:` clause with 8+ phrases.
+   + `WHEN:` clause with 8+ phrases.
 4. **Validate** — `make check` must pass with zero errors before opening a PR.
 5. **CODEOWNERS** — add an entry if a team other than Platform Engineering
    owns the new skill or product folder.

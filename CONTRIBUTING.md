@@ -10,6 +10,8 @@ add or improve a skill in this repository.
 - **Node.js 18+** (`npx` is used to install skills)
 - **Python 3.10+** and **[uv](https://docs.astral.sh/uv/)** (for local validation)
 - **Git** and a GitHub account
+- **`generate-agent-skills` skill** — strongly recommended before authoring any
+  skill (see Step 1)
 
 Install uv if you don't have it:
 
@@ -28,25 +30,38 @@ targets.
 
 ---
 
-## Step 1 — Use a Skill Authoring Tool to Draft Your Skill
+## Step 1 — Install and Use `generate-agent-skills`
 
-Before writing a `SKILL.md` from scratch, we strongly recommend using an agent
-skill specifically designed for skill authoring. Such a skill will guide your
-agent through purpose scoping, trigger-phrase writing, frontmatter authoring,
-body structuring, and the pre-submission checklist — producing more consistent,
-higher-quality results than writing manually.
+Before writing a `SKILL.md` from scratch, install the `generate-agent-skills`
+skill from this repository. It is specifically designed for skill authoring and
+will guide your agent through purpose scoping, trigger-phrase writing,
+frontmatter authoring, body structuring, and the pre-submission checklist.
 
-Ask your agent something like:
+Install it locally (for the current project) or globally:
+
+```bash
+# local — scoped to your current working directory
+npx skills add canonical/skills --skill generate-agent-skills
+
+# global — available in any project
+npx skills add canonical/skills --skill generate-agent-skills --global
+```
+
+Once installed, ask your agent:
 
 > "Help me create a new agent skill for [describe what your skill should do].
 > Walk me through the purpose, description, frontmatter, and content structure."
 
-This approach:
+Using this skill:
 
 - Ensures your `description` field contains effective trigger phrases.
 - Catches common mistakes (missing fields, weak descriptions, wrong folder)
   before CI does.
 - Produces a consistent style across all skills in the repository.
+
+> **This step is strongly recommended.** Pull requests that skip it often
+> require multiple review rounds to fix frontmatter and description quality
+> issues that the skill catches automatically.
 
 ---
 

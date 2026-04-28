@@ -142,27 +142,26 @@
 
     /* ── Hero ── */
     .hero {
-      background: #f7f7f7;
-      border-bottom: 1px solid var(--border);
+      background: var(--dark);
       padding: 4rem 0 3rem;
     }
     .hero h1 {
       font-size: 2.5rem;
       font-weight: 300;
-      color: var(--orange);
+      color: #fff;
       line-height: 1.2;
       margin-bottom: 0.5rem;
     }
-    .hero h1 em { font-style: normal; color: var(--dark); }
+    .hero h1 em { font-style: normal; color: var(--orange); }
     .hero__sub {
       font-size: 1.125rem;
       font-weight: 300;
-      color: var(--text-muted);
+      color: rgba(255,255,255,0.7);
       margin-bottom: 0.25rem;
     }
     .hero__meta {
       font-size: 0.875rem;
-      color: var(--warm-grey);
+      color: rgba(255,255,255,0.5);
       margin-bottom: 2rem;
     }
     .hero__meta a { color: var(--orange); }
@@ -171,8 +170,8 @@
       display: inline-flex;
       align-items: center;
       gap: 0.75rem;
-      background: #fff;
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 2px;
       padding: 0.625rem 1rem;
       max-width: 560px;
@@ -181,7 +180,7 @@
     .install-bar code {
       font-family: var(--mono);
       font-size: 0.9375rem;
-      color: var(--text);
+      color: rgba(255,255,255,0.9);
       flex: 1;
       white-space: nowrap;
       overflow: hidden;

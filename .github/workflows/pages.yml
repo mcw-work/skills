@@ -14,8 +14,9 @@ on:
 permissions:
   contents: write
 
+# Shared group with preview.yml — serialises all gh-pages writes to prevent push conflicts.
 concurrency:
-  group: pages-main
+  group: gh-pages
   cancel-in-progress: false
 
 jobs:

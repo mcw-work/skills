@@ -13,9 +13,10 @@ permissions:
   contents: write
   pull-requests: write
 
+# Shared group with pages.yml — serialises all gh-pages writes to prevent push conflicts.
 concurrency:
-  group: pr-preview-${{ github.event.number }}
-  cancel-in-progress: true
+  group: gh-pages
+  cancel-in-progress: false
 
 jobs:
   deploy-preview:

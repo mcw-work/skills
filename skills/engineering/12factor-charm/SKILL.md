@@ -12,6 +12,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   version: "1.0.0"
+  summary: Initialize the charm using the discovered framework, add the required relations and configuration options, then build the charm (and iterate over failures). This skill will also map the paas-charm expected environment variables to the expected workload environment variable, eventually rebuild the rock.
   tags:
     - canonical
     - 12-factor

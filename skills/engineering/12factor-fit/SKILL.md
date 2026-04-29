@@ -12,6 +12,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
+  summary: Analyze the existing project, detect the framework, and assess the compatibility with the 12-factor with Rockcraft, Charmcraft, and Juju / Terraform deployment
   version: "1.0.0"
   tags:
     - canonical

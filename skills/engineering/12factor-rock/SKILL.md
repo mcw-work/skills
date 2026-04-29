@@ -13,6 +13,7 @@ license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
   version: "1.0.0"
+  summary: Initialize the rock using the discovered framework, configure the discovered entrypoint, and job/scheduler services, add any dependencies or required files in the rock, then build the rock (and iterate over failures).
   tags:
     - canonical
     - 12-factor

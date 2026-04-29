@@ -568,13 +568,13 @@
   <div class="grid">
   <article class="card"
            data-name="12factor-charm"
-           data-desc="Creates or adapts a Canonical 12-factor charm in the supported `charm/` layout using Charmcraft and `paas-charm`. Preserves the stock generated charm by default, carries explicit relation optionality forward, mirrors required workload environment safely."
+           data-desc="Initialize the charm using the discovered framework, add the required relations and configuration options, then build the charm (and iterate over failures). This skill will also map the paas-charm expected environment variables to the expected workload environment variable, eventually rebuild the rock."
            data-tags="canonical 12-factor charmcraft paas-charm juju">
     <div class="card__head">
       <span class="card__name">12factor-charm</span>
       <span class="card__version">v1.0.0</span>
     </div>
-    <p class="card__desc">Creates or adapts a Canonical 12-factor charm in the supported `charm/` layout using Charmcraft and `paas-charm`. Preserves the stock generated charm by default, carries explicit relation optionality forward, mirrors required workload environment safely.</p>
+    <p class="card__desc">Initialize the charm using the discovered framework, add the required relations and configuration options, then build the charm (and iterate over failures). This skill will also map the paas-charm expected environment variables to the expected workload environment variable, eventually rebuild the rock.</p>
     
     <div class="card__foot">
       <div class="tags"><span class="tag">canonical</span><span class="tag">12-factor</span><span class="tag">charmcraft</span><span class="tag">paas-charm</span><span class="tag">juju</span></div>
@@ -591,13 +591,13 @@
   </article>
   <article class="card"
            data-name="12factor-fit"
-           data-desc="Assesses whether a repository fits Canonical&#x27;s 12-factor rock, charm, Juju, and Terraform workflow before generating artifacts. Confirms framework fit, web-service scope, Kubernetes suitability, deployment context, relation optionality, and preflight readiness so later skills do not guess."
+           data-desc="Analyze the existing project, detect the framework, and assess the compatibility with the 12-factor with Rockcraft, Charmcraft, and Juju / Terraform deployment"
            data-tags="canonical 12-factor fit rockcraft charmcraft juju terraform">
     <div class="card__head">
       <span class="card__name">12factor-fit</span>
       <span class="card__version">v1.0.0</span>
     </div>
-    <p class="card__desc">Assesses whether a repository fits Canonical&#x27;s 12-factor rock, charm, Juju, and Terraform workflow before generating artifacts. Confirms framework fit, web-service scope, Kubernetes suitability, deployment context, relation optionality, and preflight readiness so later skills do not guess.</p>
+    <p class="card__desc">Analyze the existing project, detect the framework, and assess the compatibility with the 12-factor with Rockcraft, Charmcraft, and Juju / Terraform deployment</p>
     
     <div class="card__foot">
       <div class="tags"><span class="tag">canonical</span><span class="tag">12-factor</span><span class="tag">fit</span><span class="tag">rockcraft</span><span class="tag">charmcraft</span><span class="tag">juju</span><span class="tag">terraform</span></div>
@@ -614,13 +614,13 @@
   </article>
   <article class="card"
            data-name="12factor-rock"
-           data-desc="Creates or adapts a Canonical 12-factor rock while staying inside the Rockcraft extension contract. Validates framework-specific rock fit, keeps edits minimal, preserves extension boundaries, and guides build and registry push work."
+           data-desc="Initialize the rock using the discovered framework, configure the discovered entrypoint, and job/scheduler services, add any dependencies or required files in the rock, then build the rock (and iterate over failures)."
            data-tags="canonical 12-factor rockcraft oci packaging pebble registry">
     <div class="card__head">
       <span class="card__name">12factor-rock</span>
       <span class="card__version">v1.0.0</span>
     </div>
-    <p class="card__desc">Creates or adapts a Canonical 12-factor rock while staying inside the Rockcraft extension contract. Validates framework-specific rock fit, keeps edits minimal, preserves extension boundaries, and guides build and registry push work.</p>
+    <p class="card__desc">Initialize the rock using the discovered framework, configure the discovered entrypoint, and job/scheduler services, add any dependencies or required files in the rock, then build the rock (and iterate over failures).</p>
     
     <div class="card__foot">
       <div class="tags"><span class="tag">canonical</span><span class="tag">12-factor</span><span class="tag">rockcraft</span><span class="tag">oci</span><span class="tag">packaging</span><span class="tag">pebble</span><span class="tag">registry</span></div>

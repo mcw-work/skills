@@ -177,7 +177,7 @@ description: >
 
 | Field | Type | Rule |
 |---|---|---|
-| `name` | string | lowercase kebab-case; unique; matches folder name |
+| `name` | string | lowercase kebab-case; may start with a digit (e.g. `12factor-app`); unique; matches folder name |
 | `description` | block scalar | ≥ 20 words + `WHEN:` clause |
 | `license` | string | Must be `Apache-2.0` |
 | `metadata.author` | string | Must start with `Canonical` (e.g. `Canonical` or `Canonical/platform-engineering`) |

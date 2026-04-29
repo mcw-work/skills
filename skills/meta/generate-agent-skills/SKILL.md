@@ -295,6 +295,7 @@ Before proceeding to Step 6, confirm:
 
 **Content Quality:**
 - [ ] YAML frontmatter includes all required fields: `name`, `description`, `license` (top-level); `metadata.author`, `metadata.version` (under `metadata:`)
+- [ ] `metadata.summary` is present and ≤ 160 chars — plain language, no `WHEN:` clause (recommended)
 - [ ] `metadata.tags` field is present (recommended)
 - [ ] `metadata.author` is set to your organization name; `license` to the project's SPDX identifier
 - [ ] Description is high-entropy and keyword-rich with a `WHEN:` clause (8+ trigger phrases)

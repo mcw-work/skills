@@ -196,6 +196,7 @@ Follows the [agentskills.io specification](https://agentskills.io/specification#
 * **License:** Top-level SPDX identifier appropriate for your project (e.g. `Apache-2.0`, `MIT`).
 * **metadata.version:** SemVer string (e.g. `"1.0.0"`). Bump on every skill change.
 * **metadata.author:** Your organization or team name.
+* **metadata.summary:** Recommended — ≤ 160 chars, plain language, no `WHEN:` clause. Shown on skill cards; falls back to truncated `description` if absent.
 * **metadata.tags:** Recommended — list of domain or product keywords.
 
 ### Token Budgets

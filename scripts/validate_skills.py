@@ -12,7 +12,7 @@ follows the agentskills.io specification (https://agentskills.io/specification):
     - Recommended: metadata.tags
 
   Rules:
-    - name: lowercase kebab-case, unique across the repo
+    - name: lowercase kebab-case, unique across the repo; may start with a digit (e.g. 12factor-app)
     - metadata.version: semantic versioning (X.Y.Z)
     - metadata.author: starts with "Canonical" (e.g. "Canonical" or "Canonical/<team>")
     - metadata.summary: recommended short human-readable blurb (≤ 160 chars) for display
@@ -64,7 +64,7 @@ EXPECTED_AUTHOR_PREFIX = "Canonical"
 EXPECTED_LICENSE = "Apache-2.0"
 
 _SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
-_KEBAB_RE = re.compile(r"^[a-z][a-z0-9-]+$")
+_KEBAB_RE = re.compile(r"^[a-z0-9][a-z0-9-]*[a-z0-9]$")
 _TRIGGER_RES = [
     re.compile(r"\bWHEN\s*:", re.IGNORECASE),
     re.compile(r"\bactivat", re.IGNORECASE),

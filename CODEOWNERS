@@ -8,3 +8,6 @@
 /skills/engineering/                    @canonical/platform-engineering
 /skills/documentation/                  @canonical/platform-engineering
 /skills/practices/                      @canonical/platform-engineering
+
+# Product namespaces
+/skills/products/snapcraft/             @canonical/device-management-telemetry

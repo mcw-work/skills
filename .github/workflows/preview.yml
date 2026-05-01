@@ -22,7 +22,8 @@ jobs:
   deploy-preview:
     name: Build and deploy PR preview
     runs-on: ubuntu-latest
-    if: github.event.action != 'closed'
+    # Only deploy previews for PRs from branches in this repo, not forks, to avoid needing to set up secrets for fork PRs.
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -41,7 +42,7 @@ jobs:
   cleanup-preview:
     name: Clean up PR preview
     runs-on: ubuntu-latest
-    if: github.event.action == 'closed'
+    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
 

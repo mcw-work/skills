@@ -8,17 +8,22 @@ follows the agentskills.io specification (https://agentskills.io/specification):
   Top-level fields (spec-standard):
     - Required: name, description, license
   Under metadata: (spec-standard location for arbitrary key-value pairs):
-    - Required: metadata.author, metadata.version
+    - Required: metadata.author, metadata.version, metadata.summary
     - Recommended: metadata.tags
 
   Rules:
     - name: lowercase kebab-case, unique across the repo; may start with a digit (e.g. 12factor-app)
+    - name: must match the skill's folder name exactly (mismatch is an error)
     - metadata.version: semantic versioning (X.Y.Z)
     - metadata.author: starts with "Canonical" (e.g. "Canonical" or "Canonical/<team>")
-    - metadata.summary: recommended short human-readable blurb (≤ 160 chars) for display
+    - metadata.summary: required short human-readable blurb (≤ 160 chars) for the skills website
     - license: "Apache-2.0"
-    - description: minimum length, presence of trigger phrases
+    - description: minimum length, presence of trigger phrases, max 1024 chars
     - directory: each skill folder contains exactly one SKILL.md
+
+This is the repo-authoritative validator. For the relationship between this script
+and the portable generate-agent-skills/scripts/validate_skill.py, see
+.github/instructions/scripts.instructions.md.
 
 Usage:
     python scripts/validate_skills.py [--warn-only] [--path PATH]
@@ -54,9 +59,9 @@ except ImportError:
 # Top-level fields required by this repo (subset of the agentskills.io spec)
 REQUIRED_FIELDS: set[str] = {"name", "description", "license"}
 # Fields required under the spec-standard `metadata:` mapping
-REQUIRED_METADATA_FIELDS: set[str] = {"author", "version"}
+REQUIRED_METADATA_FIELDS: set[str] = {"author", "version", "summary"}
 # Recommended (warning only) metadata sub-fields
-RECOMMENDED_METADATA_FIELDS: set[str] = {"tags", "summary"}
+RECOMMENDED_METADATA_FIELDS: set[str] = {"tags"}
 
 SUMMARY_MAX_CHARS = 160
 
@@ -72,6 +77,7 @@ _TRIGGER_RES = [
 ]
 
 MIN_DESCRIPTION_WORDS = 20
+MAX_DESCRIPTION_CHARS = 1024
 
 VALID_CATEGORIES = {"meta", "products", "engineering", "documentation", "operations", "security", "practices"}
 
@@ -215,9 +221,9 @@ def validate_skill(skill_md: Path, skills_root: Path) -> SkillResult:
         folder_name = skill_md.parent.name
         if result.name != folder_name:
             result.issues.append(Issue(
-                "warning",
+                "error",
                 f"'name' value ('{result.name}') does not match the folder name ('{folder_name}'). "
-                "They should be identical for consistent discovery.",
+                "They must be identical — rename the folder or update the 'name' field.",
             ))
 
     # metadata.version — semver
@@ -256,6 +262,12 @@ def validate_skill(skill_md: Path, skills_root: Path) -> SkillResult:
     # description quality
     description = str(frontmatter.get("description", "")).strip()
     if description:
+        if len(description) > MAX_DESCRIPTION_CHARS:
+            result.issues.append(Issue(
+                "error",
+                f"'description' is {len(description)} chars (max: {MAX_DESCRIPTION_CHARS}). "
+                "Trim the description — move extended guidance to the skill body or references/.",
+            ))
         word_count = len(description.split())
         if word_count < MIN_DESCRIPTION_WORDS:
             result.issues.append(Issue(

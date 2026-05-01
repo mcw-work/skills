@@ -157,6 +157,7 @@ determines whether the agent activates this skill for a given task.
 
 A strong description:
 
+- Is **at most 1,024 characters** (enforced by CI — excess is an error).
 - Is at least 20 words before the `WHEN:` clause.
 - Includes a `WHEN:` clause with 8 or more distinct trigger phrases covering
   both beginner and expert vocabulary.
@@ -177,12 +178,12 @@ description: >
 
 | Field | Type | Rule |
 |---|---|---|
-| `name` | string | lowercase kebab-case; may start with a digit (e.g. `12factor-app`); unique; matches folder name |
-| `description` | block scalar | ≥ 20 words + `WHEN:` clause |
+| `name` | string | lowercase kebab-case; may start with a digit (e.g. `12factor-app`); unique; matches folder name (mismatch is a CI error) |
+| `description` | block scalar | ≤ 1,024 chars (error if exceeded); ≥ 20 words + `WHEN:` clause |
 | `license` | string | Must be `Apache-2.0` |
 | `metadata.author` | string | Must start with `Canonical` (e.g. `Canonical` or `Canonical/platform-engineering`) |
 | `metadata.version` | string | SemVer `"X.Y.Z"` — must be quoted |
-| `metadata.summary` | string | ≤ 160 chars — shown on skill cards; falls back to truncated `description` if absent |
+| `metadata.summary` | string | **Required** in this repo — ≤ 160 chars — shown on the canonical.github.io/skills listing |
 | `metadata.tags` | list | At least one entry (recommended) |
 
 > These fields follow the [agentskills.io specification](https://agentskills.io/specification):
@@ -210,7 +211,7 @@ make pages      # smoke-test the page generator
 `make validate` checks:
 
 - Required fields are present and non-empty: `name`, `description`, `license` (top-level);
-  `metadata.author`, `metadata.version` (under `metadata:`).
+  `metadata.author`, `metadata.version`, `metadata.summary` (under `metadata:`).
 - `name` is lowercase kebab-case and unique across the repo.
 - `name` matches the skill's folder name.
 - `metadata.version` follows SemVer.
@@ -228,14 +229,16 @@ them if you can, but they will not block a merge.
 
 1. Fork the repository and create a branch.
 2. Add your skill folder.
-3. Run `python scripts/validate_skills.py` — must exit 0.
+3. Run `make check` — must exit 0 with no errors.
 4. Push and open a PR against `main`.
 
 ### PR checklist
 
-- [ ] `validate_skills.py` exits 0 (no errors)
+- [ ] `make check` exits 0 (no errors)
 - [ ] Markdown lint passes
-- [ ] Skill folder name matches the `name` frontmatter field
+- [ ] Skill folder name matches the `name` frontmatter field exactly (mismatch blocks CI)
+- [ ] `description` is ≤ 1,024 characters
+- [ ] `metadata.summary` is present and ≤ 160 chars (required in this repo)
 - [ ] Skill is in the correct category folder
 - [ ] You have tested the skill by installing it locally and activating it with
       your agent on a representative task

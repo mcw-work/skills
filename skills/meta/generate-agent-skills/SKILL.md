@@ -12,7 +12,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: Canonical/platform-engineering
-  version: "1.0.0"
+  version: "1.1.0"
   summary: Scaffold, validate, and refine agent skills following the agentskills.io specification.
   tags:
     - meta
@@ -67,6 +67,11 @@ If working with an existing skill, analyze:
 - Current SKILL.md structure and content
 - Existing scripts, references, and assets
 - What's working well vs. what needs improvement
+- **Frontmatter completeness** — confirm all required AND recommended fields are
+  present: `name`, `description`, `license`, `metadata.author`, `metadata.version`,
+  and the recommended `metadata.summary` (≤ 160 chars, shown on skill cards) and
+  `metadata.tags`. Add `metadata.summary` if it is missing — it is the first thing
+  displayed on the canonical.github.io/skills listing.
 
 **Conclude this step when:** You have a clear sense of the skill's functionality and triggering scenarios.
 
@@ -249,9 +254,18 @@ Follow the structuring guidance embedded in the generated SKILL.md template.
 
 **⚠️ MANDATORY STEP - DO NOT SKIP ⚠️**
 
-Run the validation script to ensure specification compliance.
+### Prefer repo-native tooling
 
-### Command:
+Before reaching for the bundled script, check whether the target repository
+provides its own validation tooling for skills. Run them first before your own validation script. 
+
+```bash
+# If a Makefile is present with these targets, use them:
+make check      # validate + lint + smoke test (preferred)
+make validate   # frontmatter checks only
+make lint       # markdown linting only
+```
+
 ```bash
 python3 scripts/validate_skill.py --path <path-to-new-skill>
 ```
@@ -262,6 +276,11 @@ python3 scripts/validate_skill.py --path <path-to-new-skill>
 ```bash
 python3 scripts/validate_skill.py --path .github/skills/my-new-skill
 ```
+
+The bundled script is a *portable baseline* — it checks agentskills.io spec
+compliance and Canonical's opinionated conventions (SemVer, WHEN clause,
+description ≤ 1 024 chars, summary recommended). It does **not** check
+repo-specific rules such as name uniqueness or valid categories.
 
 ### What it checks:
 - ✅ Directory naming regex (`^[a-z0-9][a-z0-9-]*[a-z0-9]$`)
@@ -295,6 +314,7 @@ Before proceeding to Step 6, confirm:
 
 **Content Quality:**
 - [ ] YAML frontmatter includes all required fields: `name`, `description`, `license` (top-level); `metadata.author`, `metadata.version` (under `metadata:`)
+- [ ] `description` is ≤ 1,024 characters and keyword-rich with a `WHEN:` clause (8+ trigger phrases)
 - [ ] `metadata.summary` is present and ≤ 160 chars — plain language, no `WHEN:` clause (recommended)
 - [ ] `metadata.tags` field is present (recommended)
 - [ ] `metadata.author` is set to your organization name; `license` to the project's SPDX identifier
@@ -376,5 +396,8 @@ If questions arise during skill creation:
 
 **Output formatting** (templates, examples, validation):
 → Read `references/output-patterns.md`
+
+**Validator scope** (what the bundled script checks vs. the repo validator):
+→ Read the module docstring in `scripts/validate_skill.py`
 
 **Do not hallucinate answers.** Always consult the authoritative sources.

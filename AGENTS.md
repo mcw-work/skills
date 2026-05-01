@@ -70,15 +70,15 @@ docs/
 
 ```yaml
 ---
-name: <kebab-case>        # lowercase; unique across repo; matches folder name
+name: <kebab-case>        # lowercase; unique across repo; matches folder name (mismatch = CI error)
 description: >
-  <What the skill does — at least 20 words before the WHEN clause.>
+  <What the skill does — at least 20 words before the WHEN clause; max 1,024 chars total.>
   WHEN: <8+ comma-separated trigger phrases covering beginner and expert vocab>.
 license: Apache-2.0
 metadata:                 # spec-standard location for author, version, tags
   author: Canonical             # or Canonical/<team>, e.g. Canonical/platform-engineering
   version: "1.0.0"       # SemVer, quoted string
-  summary: One or two sentence human-readable blurb shown on skill cards (≤ 160 chars).
+  summary: One or two sentence human-readable blurb shown on skill cards (≤ 160 chars). # required in this repo
   tags:
     - <domain-or-product>
 ---
@@ -94,6 +94,7 @@ metadata:                 # spec-standard location for author, version, tags
 - Skill body must be agent-agnostic — no references to specific agents or
   tools (Copilot, Claude, Cursor, etc.).
 - Description must include a `WHEN:` clause with at least 8 trigger phrases.
+- Description must not exceed 1,024 characters (enforced by CI).
 - Large skills (>200 lines or >3 sub-topics) use a `references/` sub-folder;
   `SKILL.md` acts as a router to those files.
 
@@ -103,6 +104,11 @@ metadata:                 # spec-standard location for author, version, tags
   or `python3` directly.
 - Scripts live in `scripts/`; no logic belongs in CI workflow files.
 - `docs/index.html` is generated — edit `scripts/template.html` instead.
+- Two validation scripts exist with intentionally different scopes:
+  `scripts/validate_skills.py` is repo-authoritative; the portable
+  `generate-agent-skills/scripts/validate_skill.py` is a fallback for
+  contributors in other repos. See `.github/instructions/scripts.instructions.md`
+  for the full maintainer contract before modifying either.
 
 ### Versioning
 
@@ -157,8 +163,8 @@ issues that block PR review. Use it before writing a single line of `SKILL.md`.
    CONTRIBUTING.md Step 1 for the full prompt.
 2. **Create folder** — `skills/<category>/<skill-name>/SKILL.md`
    (or `skills/products/<product>/<skill-name>/SKILL.md`).
-3. **Write frontmatter** — all six required fields; description ≥ 20 words
-   + `WHEN:` clause with 8+ phrases.
+3. **Write frontmatter** — all six required fields; description ≤ 1,024 chars,
+   ≥ 20 words + `WHEN:` clause with 8+ phrases; `metadata.summary` ≤ 160 chars.
 4. **Validate** — `make check` must pass with zero errors before opening a PR.
 5. **CODEOWNERS** — add an entry if a team other than Platform Engineering
    owns the new skill or product folder.

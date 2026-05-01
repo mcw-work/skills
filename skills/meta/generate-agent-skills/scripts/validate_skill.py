@@ -1,3 +1,19 @@
+"""
+Portable baseline validator for Agent Skills (agentskills.io specification).
+
+Checks a single skill directory for spec compliance and Canonical's opinionated
+conventions (SemVer version, WHEN clause, description ≤ 1 024 chars, summary
+recommended). Designed to be used anywhere the generate-agent-skills skill is
+installed, with no assumptions about the host repository's structure or rules.
+
+When working inside canonical/skills, prefer the repo-authoritative validator:
+
+    make check      # validate + lint + smoke test (preferred)
+    make validate   # frontmatter checks only
+
+See .github/instructions/scripts.instructions.md for the full maintainer
+contract between this script and scripts/validate_skills.py.
+"""
 import os
 import argparse
 import re
@@ -14,7 +30,9 @@ REQUIRED_TOP_LEVEL = {"name", "description", "license"}
 # Fields required under metadata: (spec-standard location)
 REQUIRED_METADATA = {"author", "version"}
 # Recommended metadata sub-fields
-RECOMMENDED_METADATA = {"tags"}
+RECOMMENDED_METADATA = {"tags", "summary"}
+
+MAX_DESCRIPTION_CHARS = 1024
 
 _SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
 _TRIGGER_RES = [
@@ -67,6 +85,11 @@ def validate_skill(path):
         if not desc_val:
             errors.append("YAML frontmatter missing 'description' field.")
         else:
+            if len(desc_val) > MAX_DESCRIPTION_CHARS:
+                errors.append(
+                    f"'description' is {len(desc_val)} chars (max: {MAX_DESCRIPTION_CHARS}). "
+                    "Trim it — move extended guidance to the skill body or references/."
+                )
             if not any(pat.search(desc_val) for pat in _TRIGGER_RES):
                 warnings.append("'description' has no trigger phrases. Add a 'WHEN: ...' clause.")
 
@@ -99,6 +122,10 @@ def validate_skill(path):
         # metadata.tags (recommended)
         if not metadata.get("tags"):
             warnings.append("Missing recommended 'metadata.tags' field.")
+
+        # metadata.summary (recommended)
+        if not metadata.get("summary"):
+            warnings.append("Missing recommended 'metadata.summary' field (≤ 160 chars, shown on skill cards).")
 
     # 4. ADVISORY: Progressive Disclosure
     if not os.path.isdir(os.path.join(path, 'references')):

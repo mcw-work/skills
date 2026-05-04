@@ -1,26 +1,24 @@
 ---
-name: confdb
+name: adopt-snapcraft-confdb
 description: >
-  Guides migration and implementation of snapd ConfDB (configuration database)
-  for custodian and observer snaps. ConfDB follows a custodian–observer pattern
-  where custodian snaps write configuration to a central validated store and
-  observer snaps read it via controlled views, with access governed by interface
-  permissions for isolation and type safety. This skill covers: designing confdb
-  schemas and views for multi-snap systems, checking schema and plug naming
-  convention compliance and suggesting exact renames, implementing custodian and
-  observer snap hooks correctly including configure, change-view, and
-  observe-view hooks, avoiding common pitfalls such as deadlocks from confdb
-  access inside connect hooks, signing keys and assertion import/signing
-  workflow, interface connection sequencing, writing unit and integration tests
-  for confdb-enabled snaps, migrating existing file-based or legacy
-  configuration to confdb, planning hybrid backward-compatible rollout
-  strategies, and troubleshooting connection, permission, and initialisation
-  failures across multi-snap systems.
-  WHEN: migrate snap configuration to confdb, migrate file-based configuration to confdb, design a confdb schema, share configuration between snaps, share network configuration between snaps, single source of truth for snap configuration, define admin and state views, check confdb naming conventions, review snapcraft.yaml plugs for confdb, do my views and plug names follow naming guidelines, suggest renames to make confdb naming-compliant, implement configure hook writes, implement change-view hooks, implement observe-view hooks, avoid connect hook deadlocks, observer snap deadlock when connecting interface, troubleshoot confdb interface connection failures, debug no custodian snap connected errors, debug view not found errors, validate storage path version prefixes, sign and import confdb-schema assertions, write unit tests for confdb hooks, write integration tests for confdb custodian snap, plan hybrid backward-compatible content-slot rollout, review confdb migration pull requests.
+  Guides adoption of snapd ConfDB for Snap ecosystems using the
+  custodian-observer model. Explains when to use ConfDB, how to design schemas
+  and views, how to apply naming conventions, and how to sign and import
+  confdb-schema assertions. Includes safe hook patterns for configure,
+  change-view, and observe-view, migration from file/content-slot
+  configuration with staged compatibility, unit and integration testing
+  strategies, and troubleshooting for connection, permission, and
+  initialization failures.
+  WHEN: migrate snap configuration to confdb, design confdb schema, define
+  admin and state views, check confdb naming conventions, implement configure
+  hook writes, implement change-view validation, implement observe-view
+  reactions, sign and import confdb-schema assertions, test confdb-enabled
+  snaps, troubleshoot confdb interface failures, plan hybrid backward-compatible
+  rollout, review confdb migration pull requests.
 license: Apache-2.0
 metadata:
   author: Canonical
-  version: "1.1.0"
+  version: "1.1.2"
   summary: Guidance for adopting and operating ConfDB in snaps with schema design, naming, hooks, testing, migration, and troubleshooting support.
   tags:
     - snaps
@@ -50,14 +48,14 @@ remains the appropriate choice.
 
 ## Primary References
 
-- [Migration Playbook](./CONFDB_MIGRATION_GUIDE.md) — step-by-step migration workflow, hybrid/backward-compatibility rollout, and links to all reference docs
-- [Naming Conventions](./CONFDB_NAMING_CONVENTIONS.md) — rules and compliance checklist for schema names, view names, plug names, and storage paths
+- [Migration Playbook](./references/CONFDB_MIGRATION_GUIDE.md) — step-by-step migration workflow, hybrid/backward-compatibility rollout, and links to all reference docs
+- [Naming Conventions](./references/CONFDB_NAMING_CONVENTIONS.md) — rules and compliance checklist for schema names, view names, plug names, and storage paths
 
 ## Detailed Reference Docs
 
-- [Concepts](./CONFDB_CONCEPTS.md) — what confdb is, custodian/observer pattern, connection order
-- [Getting Started](./CONFDB_GETTING_STARTED.md) — enabling the feature, signing keys, schema import
-- [Schema Design](./CONFDB_SCHEMA_DESIGN.md) — schema structure, views, defaults files, versioning/evolution
-- [Hook Patterns](./CONFDB_HOOKS.md) — configure hook, connect hook, reading config, pitfalls with code examples
-- [Testing](./CONFDB_TESTING.md) — unit tests, integration tests, snapctl-wrapper helper
-- [Troubleshooting](./CONFDB_TROUBLESHOOTING.md) — diagnosing errors, debugging commands, best practices
+- [Concepts](./references/CONFDB_CONCEPTS.md) — what confdb is, custodian/observer pattern, connection order
+- [Getting Started](./references/CONFDB_GETTING_STARTED.md) — enabling the feature, signing keys, schema import
+- [Schema Design](./references/CONFDB_SCHEMA_DESIGN.md) — schema structure, views, defaults files, versioning/evolution
+- [Hook Patterns](./references/CONFDB_HOOKS.md) — configure hook, connect hook, reading config, pitfalls with code examples
+- [Testing](./references/CONFDB_TESTING.md) — unit tests, integration tests, snapctl-wrapper helper
+- [Troubleshooting](./references/CONFDB_TROUBLESHOOTING.md) — diagnosing errors, debugging commands, best practices

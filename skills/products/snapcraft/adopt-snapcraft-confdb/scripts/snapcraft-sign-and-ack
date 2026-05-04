@@ -1,0 +1,217 @@
+#!/bin/bash
+# Snapcraft Confdb Schema Sign & Ack Automation
+# Automatically bump revision, sign, and ack a confdb schema
+
+set -e  # Exit on error
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+YAML_TO_JSON="$SCRIPT_DIR/yaml-to-sign-json.py"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Default hold file location
+DEFAULT_HOLD_FILE="${SNAPCRAFT_HOLD_DIR:-$HOME/.snapcraft-hold}/confdb-schema-edit.yaml"
+
+usage() {
+    echo "Usage: $0 [OPTIONS] [YAML_FILE]"
+    echo
+    echo "Sign and acknowledge a confdb schema assertion."
+    echo
+    echo "Options:"
+    echo "  -k, --key-name NAME    Name of the signing key (required)"
+    echo "  --no-bump              Don't auto-bump revision"
+    echo "  --dry-run              Show commands without executing"
+    echo "  -h, --help             Show this help message"
+    echo
+    echo "Arguments:"
+    echo "  YAML_FILE              Path to YAML file (default: $DEFAULT_HOLD_FILE)"
+    echo
+    echo "Examples:"
+    echo "  $0 -k mykey"
+    echo "  $0 -k mykey ~/my-schema.yaml"
+    echo "  $0 -k mykey --no-bump schema.yaml"
+}
+
+# Parse arguments
+KEY_NAME=""
+NO_BUMP=false
+DRY_RUN=false
+YAML_FILE=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -k|--key-name)
+            KEY_NAME="$2"
+            shift 2
+            ;;
+        --no-bump)
+            NO_BUMP=true
+            shift
+            ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -*)
+            echo -e "${RED}Error: Unknown option: $1${NC}"
+            usage
+            exit 1
+            ;;
+        *)
+            YAML_FILE="$1"
+            shift
+            ;;
+    esac
+done
+
+# Validate key name
+if [ -z "$KEY_NAME" ]; then
+    echo -e "${RED}Error: Key name is required (use -k or --key-name)${NC}"
+    echo
+    usage
+    exit 1
+fi
+
+# Use default file if not specified
+if [ -z "$YAML_FILE" ]; then
+    YAML_FILE="$DEFAULT_HOLD_FILE"
+fi
+
+# Expand tilde and make absolute path
+YAML_FILE="${YAML_FILE/#\~/$HOME}"
+
+# Validate input file
+if [ ! -f "$YAML_FILE" ]; then
+    echo -e "${RED}Error: File not found: $YAML_FILE${NC}"
+    exit 1
+fi
+
+# Validate yaml-to-sign-json.py exists
+if [ ! -f "$YAML_TO_JSON" ]; then
+    echo -e "${RED}Error: yaml-to-sign-json.py not found at: $YAML_TO_JSON${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${GREEN}  Confdb Schema Sign & Ack Automation${NC}"
+echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+echo
+
+# Extract current metadata
+ACCOUNT_ID=$(grep '^account-id:' "$YAML_FILE" | awk '{print $2}')
+NAME=$(grep '^name:' "$YAML_FILE" | awk '{print $2}')
+
+# Extract revision - handle both commented and uncommented lines
+# First try uncommented, then try commented
+CURRENT_REVISION=$(grep '^revision:' "$YAML_FILE" | awk '{print $2}')
+if [ -z "$CURRENT_REVISION" ]; then
+    CURRENT_REVISION=$(grep '^# *revision:' "$YAML_FILE" | sed 's/^# *//' | awk '{print $2}')
+fi
+
+echo -e "${BLUE}Schema Information:${NC}"
+echo -e "  Account ID: ${YELLOW}${ACCOUNT_ID}${NC}"
+echo -e "  Name:       ${YELLOW}${NAME}${NC}"
+echo -e "  Revision:   ${YELLOW}${CURRENT_REVISION}${NC}"
+echo -e "  Key:        ${YELLOW}${KEY_NAME}${NC}"
+echo
+
+# Create temp directory for working files
+WORK_DIR=$(mktemp -d)
+#trap "rm -rf $WORK_DIR" EXIT
+
+WORKING_YAML="$WORK_DIR/schema.yaml"
+cp "$YAML_FILE" "$WORKING_YAML"
+
+# Auto-bump revision if not disabled
+if [ "$NO_BUMP" = false ]; then
+    if [ -n "$CURRENT_REVISION" ]; then
+        NEW_REVISION=$((CURRENT_REVISION + 1))
+        
+        # Uncomment and update revision - handle both commented and uncommented
+        # First replace commented revision lines, then uncommented ones
+        sed -i "s/^# *revision: *[0-9][0-9]*/revision: $NEW_REVISION/" "$WORKING_YAML"
+        sed -i "s/^revision: *[0-9][0-9]*/revision: $NEW_REVISION/" "$WORKING_YAML"
+        
+        echo -e "${GREEN}✓ Auto-bumped revision: ${CURRENT_REVISION} → ${NEW_REVISION}${NC}"
+        echo
+    else
+        echo -e "${YELLOW}⚠ Could not detect current revision, skipping auto-bump${NC}"
+        echo
+    fi
+fi
+
+# Generate temp file names
+JSON_FILE="$WORK_DIR/schema.json"
+SIGNED_FILE="$WORK_DIR/schema.assert"
+
+echo -e "${BLUE}Processing Steps:${NC}"
+
+# Step 1: Convert YAML to JSON
+echo -n "  1. Converting YAML to JSON... "
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}[DRY RUN]${NC}"
+else
+    if "$YAML_TO_JSON" "$WORKING_YAML" > "$JSON_FILE"; then
+        echo -e "${GREEN}✓${NC}"
+    else
+        echo -e "${RED}✗${NC}"
+        echo -e "${RED}Error: Failed to convert YAML to JSON${NC}"
+        exit 1
+    fi
+fi
+
+# Step 2: Sign the assertion
+echo -n "  2. Signing assertion with key '$KEY_NAME'... "
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}[DRY RUN]${NC}"
+else
+    if cat "$JSON_FILE" | snap sign -k "$KEY_NAME" > "$SIGNED_FILE" 2>&1; then
+        echo -e "${GREEN}✓${NC}"
+    else
+        echo -e "${RED}✗${NC}"
+        echo -e "${RED}Error: Failed to sign assertion${NC}"
+        echo -e "${YELLOW}Tip: Make sure key '$KEY_NAME' exists (check with 'snap keys')${NC}"
+        exit 1
+    fi
+fi
+
+# Step 3: Acknowledge the assertion
+echo -n "  3. Acknowledging assertion... "
+if [ "$DRY_RUN" = true ]; then
+    echo -e "${YELLOW}[DRY RUN]${NC}"
+else
+    if snap ack "$SIGNED_FILE" 2>&1; then
+        echo -e "${GREEN}✓${NC}"
+    else
+        echo -e "${RED}✗${NC}"
+        echo -e "${RED}Error: Failed to acknowledge assertion${NC}"
+        exit 1
+    fi
+fi
+
+echo
+echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${GREEN}✓ Successfully signed and acknowledged confdb schema!${NC}"
+echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+echo
+
+# Show verification info
+if [ "$DRY_RUN" = false ]; then
+    NEW_REV=$(grep '^revision:' "$WORKING_YAML" | awk '{print $2}')
+    echo -e "${BLUE}Verification:${NC}"
+    echo "  snap known confdb-schema account-id=$ACCOUNT_ID name=$NAME"
+    echo
+    echo -e "${YELLOW}Working files (cleaned up on exit):${NC}"
+    echo -e "  YAML:   ${WORK_DIR}/schema.yaml"
+    echo -e "  JSON:   ${WORK_DIR}/schema.json"
+    echo -e "  Signed: ${WORK_DIR}/schema.assert"
+fi

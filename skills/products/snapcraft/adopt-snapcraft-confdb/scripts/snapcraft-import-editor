@@ -1,0 +1,97 @@
+#!/bin/bash
+# Snapcraft Import Editor
+# This script prompts for an existing file and imports it as the confdb schema
+
+TEMP_FILE="$1"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "${GREEN}  Snapcraft Confdb Schema - Import Mode${NC}"
+echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+echo
+echo -e "${YELLOW}This will import an existing YAML file as the confdb schema.${NC}"
+echo
+echo -n "Enter the path to the YAML file to import: "
+read -r IMPORT_FILE
+
+# Expand tilde and make absolute path
+IMPORT_FILE="${IMPORT_FILE/#\~/$HOME}"
+IMPORT_FILE=$(realpath "$IMPORT_FILE" 2>/dev/null || echo "$IMPORT_FILE")
+
+echo
+
+# Validate the file exists
+if [ ! -f "$IMPORT_FILE" ]; then
+    echo -e "${RED}✗ Error: File not found: $IMPORT_FILE${NC}"
+    echo -e "${RED}✗ Aborting - no changes made.${NC}"
+    exit 1
+fi
+
+# Extract metadata from both files
+ACCOUNT_ID=$(grep '^account-id:' "$IMPORT_FILE" | awk '{print $2}')
+NAME=$(grep '^name:' "$IMPORT_FILE" | awk '{print $2}')
+REVISION=$(grep '^revision:' "$IMPORT_FILE" | sed 's/^# *//' | awk '{print $2}')
+
+# Extract metadata from temp file (current state)
+CURRENT_ACCOUNT_ID=$(grep '^account-id:' "$TEMP_FILE" | awk '{print $2}')
+CURRENT_NAME=$(grep '^name:' "$TEMP_FILE" | awk '{print $2}')
+CURRENT_REVISION=$(grep '^revision:' "$TEMP_FILE" | sed 's/^# *//' | awk '{print $2}')
+
+if [ -n "$ACCOUNT_ID" ] || [ -n "$NAME" ] || [ -n "$REVISION" ]; then
+    echo -e "${BLUE}Import schema details:${NC}"
+    [ -n "$ACCOUNT_ID" ] && echo -e "  Account ID: ${YELLOW}${ACCOUNT_ID}${NC}"
+    [ -n "$NAME" ] && echo -e "  Name:       ${YELLOW}${NAME}${NC}"
+    [ -n "$REVISION" ] && echo -e "  Revision:   ${YELLOW}${REVISION}${NC}"
+    echo
+fi
+
+if [ -n "$CURRENT_ACCOUNT_ID" ] || [ -n "$CURRENT_NAME" ] || [ -n "$CURRENT_REVISION" ]; then
+    echo -e "${BLUE}Current schema details:${NC}"
+    [ -n "$CURRENT_ACCOUNT_ID" ] && echo -e "  Account ID: ${YELLOW}${CURRENT_ACCOUNT_ID}${NC}"
+    [ -n "$CURRENT_NAME" ] && echo -e "  Name:       ${YELLOW}${CURRENT_NAME}${NC}"
+    [ -n "$CURRENT_REVISION" ] && echo -e "  Revision:   ${YELLOW}${CURRENT_REVISION}${NC}"
+    echo
+fi
+
+# Show diff in less
+echo -e "${BLUE}Viewing differences between current and import file...${NC}"
+echo -e "${YELLOW}Press 'q' to exit the diff viewer${NC}"
+echo
+sleep 1
+
+# Create a temp file for the diff with colors
+DIFF_OUTPUT=$(mktemp)
+trap "rm -f $DIFF_OUTPUT" EXIT
+
+echo "Diff: Current (left) vs Import (right)" > "$DIFF_OUTPUT"
+echo "═══════════════════════════════════════════════════════════" >> "$DIFF_OUTPUT"
+diff -u "$TEMP_FILE" "$IMPORT_FILE" >> "$DIFF_OUTPUT" || true
+
+# Show in less with color support
+less -R "$DIFF_OUTPUT"
+
+echo
+echo -n "Import this file? (y/N): "
+read -r CONFIRM
+
+if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+    echo
+    echo -e "${YELLOW}✗ Import cancelled - no changes made.${NC}"
+    exit 0
+fi
+
+# Copy the imported file to the temp file
+cp "$IMPORT_FILE" "$TEMP_FILE"
+
+echo
+echo -e "${GREEN}✓ Successfully imported: $IMPORT_FILE${NC}"
+echo -e "${GREEN}✓ Returning to snapcraft...${NC}"
+echo
+
+exit 0

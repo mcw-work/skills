@@ -56,6 +56,7 @@ remains the appropriate choice.
 - [Concepts](./references/CONFDB_CONCEPTS.md) — what confdb is, custodian/observer pattern, connection order
 - [Getting Started](./references/CONFDB_GETTING_STARTED.md) — enabling the feature, signing keys, schema import
 - [Schema Design](./references/CONFDB_SCHEMA_DESIGN.md) — schema structure, views, defaults files, versioning/evolution
+- [Scripts Guide](./references/CONFDB_SCRIPTS_GUIDE.md) — local schema development with helper utilities from `scripts/` folder
 - [Hook Patterns](./references/CONFDB_HOOKS.md) — configure hook, connect hook, reading config, pitfalls with code examples
 - [Testing](./references/CONFDB_TESTING.md) — unit tests, integration tests, snapctl-wrapper helper
 - [Troubleshooting](./references/CONFDB_TROUBLESHOOTING.md) — diagnosing errors, debugging commands, best practices
